@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model accessibility {
+  id          Int        @id @default(autoincrement())
+  endpoint_id Int?
+  roles       String?    @db.LongText
+  endpoints   endpoints? @relation(fields: [endpoint_id], references: [id], onDelete: NoAction, map: "fk_endpoint_id")
+
+  @@index([endpoint_id], map: "fk_endpoint_id_idx")
+}
+
+model endpoints {
+  id            Int             @id @default(autoincrement())
+  endpoint      String?         @db.VarChar(100)
+  method        String?         @db.VarChar(15)
+  accessibility accessibility[]
+}
+
+model roles {
+  id    Int     @id @default(autoincrement())
+  title String  @db.VarChar(45)
+  users users[]
+}
+
+model users {
+  id        Int     @id @default(autoincrement())
+  firstname String  @db.VarChar(50)
+  lastname  String? @db.VarChar(50)
+  email     String  @db.VarChar(100)
+  phone     String  @db.VarChar(50)
+  password  String  @db.VarChar(50)
+  avatar    String? @db.VarChar(45)
+  role_id   Int?    @default(33)
+  videos    String? @db.VarChar(1000)
+  roles     roles?  @relation(fields: [role_id], references: [id], onDelete: NoAction, map: "fk_role_id")
+
+  @@index([role_id], map: "fk_role_id_idx")
+}
