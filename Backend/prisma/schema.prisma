@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model accessibility {
+model accessibility { 
   id          Int        @id @default(autoincrement())
   endpoint_id Int?
   roles       String?    @db.LongText

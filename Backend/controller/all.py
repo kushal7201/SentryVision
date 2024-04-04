@@ -23,12 +23,14 @@ def signup():
 def login():
     return user_obj.user_login(request.form)
 
+
+# to be edited
 @app.route("/user/profile")
 def profile():
     response = {
-        'firstname':"Kushal", 
-        'lastname':"Bansal", 
-        "age":"22",
+        'firstname':"user_firstname", 
+        'lastname':"user_lastname", 
+        "age":"user_age",
         "about":"Hii there, me Kushal. I'm passionate about learning new technology and applying them to make my life easier"
         }
     return response
