@@ -19,8 +19,16 @@ from collections import deque
 # from google.colab.patches import cv2_imshow
 #from google.colab.patches import cv2_imshow
 from model.user import user
+from sendMail import sendMail
 
 obj = user()
+buffer = 1
+
+def setBuffer():
+    global buffer
+    time.sleep(120)
+    buffer = 1
+
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 CLASSES_LIST = ['fight','normal']
@@ -95,24 +103,17 @@ def PredTopKProb(k,clips,model):
   return list(zip(Classes_nameTop_k,ProbTop_k))
 
 
-import cv2
-import time
-from collections import deque
-from mss import mss
-
-
-#### SCREEN RECORDING
-def predict_on_video(id,video, model, SEQUENCE_LENGTH, skip=2, showInfo=False):
-    sct = mss()
-    monitor = sct.monitors[1]  # Change the monitor index if needed
-
-    original_screen_width = monitor["width"]
-    original_screen_height = monitor["height"]
+### BEST
+def predict_on_video(id,video_file_path, model, SEQUENCE_LENGTH, skip=2, showInfo=False):
+    global buffer
+    video_reader = cv2.VideoCapture(0)
+    original_video_width = int(video_reader.get(cv2.CAP_PROP_FRAME_WIDTH))
+    original_video_height = int(video_reader.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     frames_queue = deque(maxlen=SEQUENCE_LENGTH)
-    transform = transform_()  # Assuming you have a function named transform_
-
+    transform = transform_()
     predicted_class_name = ''
+
     counter = 0
     recording_duration = 0
     recording_frames = []
@@ -121,14 +122,15 @@ def predict_on_video(id,video, model, SEQUENCE_LENGTH, skip=2, showInfo=False):
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = None
 
-    while True:
-        screenshot = sct.grab(monitor)
-        frame = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
+    while video_reader.isOpened():
+        ok, frame = video_reader.read()
+
+        if not ok:
+            break
 
         image = frame.copy()
         framee = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         framee = transform(image=framee)['image']
-
         if counter % skip == 0:
             frames_queue.append(framee)
 
@@ -159,14 +161,23 @@ def predict_on_video(id,video, model, SEQUENCE_LENGTH, skip=2, showInfo=False):
                 else:
                     update_query = f"UPDATE users SET videos = '{random_name}' WHERE id = {user_id}"
                     obj.cursor.execute(update_query)
-
-                print(f"Saved video file: AI_MODEL/bin/{random_name}")
-                out = cv2.VideoWriter(rf'AI_MODEL/bin/{random_name}.mp4', fourcc, 30.0, (original_screen_width, original_screen_height))
+                if buffer == 1:
+                    buffer = 0
+                    buffer_thread = threading.Thread(target=setBuffer)
+                    buffer_thread.start()
+                    emailQuery = f"SELECT email FROM users WHERE id = {user_id}"
+                    obj.cursor.execute(emailQuery)
+                    res = obj.cursor.fetchone()
+                    email = res['email']
+                    emailThread = threading.Thread(target=sendMail,args=(email,))
+                    emailThread.start()
+                    print(f"Saved video file: AI_MODEL/bin/{random_name}")
+                    out = cv2.VideoWriter(rf'AI_MODEL/bin/{random_name}.mp4', fourcc, 30.0, (original_video_width, original_video_height))
         else:
             cv2.putText(frame, predicted_class_name, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             if is_recording:
                 is_recording = False
-                out.release()
+                if out is not None: out.release()
                 out = None
 
         if is_recording:
@@ -175,7 +186,7 @@ def predict_on_video(id,video, model, SEQUENCE_LENGTH, skip=2, showInfo=False):
 
         if recording_duration >= 300:  # 10 seconds (assuming 30 frames per second)
             is_recording = False
-            out.release()
+            if out is not None: out.release()
             out = None
             recording_duration = 0
 
@@ -183,14 +194,15 @@ def predict_on_video(id,video, model, SEQUENCE_LENGTH, skip=2, showInfo=False):
 
         if out is not None:
             out.write(frame)
-
-        if cv2.waitKey(25) & 0xFF == ord('q'):
+        
+        cv2.imshow('Video Feed', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
-    sct.close()
 
     if showInfo:
         print(counter)
+    video_reader.release()
+
 
 torch.backends.cudnn.benchmark = True
 

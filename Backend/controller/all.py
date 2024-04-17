@@ -1,6 +1,9 @@
+import threading
+import time
+import cv2
 from base import app
 from model.user import user
-from flask import request,send_file
+from flask import Response, request,send_file, session
 from werkzeug.utils import secure_filename # for files
 from datetime import datetime
 from model.auth import *
@@ -9,7 +12,7 @@ user_obj = user()
 auth_obj = auth()
 
 @app.route("/users")
-# @auth_obj.token_auth()
+@auth_obj.token_auth()
 def user():
     return user_obj.get_users()
 
@@ -23,17 +26,21 @@ def signup():
 def login():
     return user_obj.user_login(request.form)
 
+@app.route("/logout")
+def logout():
+    return user_obj.user_logout()
 
-# to be edited
-@app.route("/user/profile")
-def profile():
-    response = {
-        'firstname':"user_firstname", 
-        'lastname':"user_lastname", 
-        "age":"user_age",
-        "about":"Hii there, me Kushal. I'm passionate about learning new technology and applying them to make my life easier"
-        }
-    return response
+@app.route("/user/<uid>/profile")
+# @app.route("/user/profile")
+def profile(uid):
+# def profile():
+#     data = {
+#         "firstname":"Kushal",
+#         "lastname":"Bansal"
+#     }
+#     return data
+    if "user_id" in session:
+        return user_obj.user_profile(uid)
 
 @app.route("/user/update", methods=["PUT"])
 def update():
@@ -94,3 +101,43 @@ def model_turnon(uid):
 @app.route("/user/<uid>/home/turnoff")
 def model_turnoff(uid):
     return user_obj.user_model_turnoff(uid)
+
+# time.sleep(2.0)
+
+# Initialize a lock used to ensure thread-safe exchanges of the output frames
+lock = threading.Lock()
+active_clients = 0
+
+def gen_frames():
+    global active_clients
+    video_capture = cv2.VideoCapture(0)
+    active_clients += 1
+    try:
+        while True:
+            if active_clients == 0:
+                break
+            success, frame = video_capture.read()
+            if not success:
+                break
+            else:
+                ret, buffer = cv2.imencode('.jpg', frame)
+                frame = buffer.tobytes()
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    finally:
+        active_clients -= 1
+        if active_clients == 0:
+            video_capture.release()
+
+@app.route('/video_feed')
+def video_feed():
+    global active_clients
+    active_clients = 0
+    video_thread = threading.Thread(target=gen_frames)
+    video_thread.start()
+    return Response(gen_frames(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# @app.route("/user/logout")
+# def logout():
+    

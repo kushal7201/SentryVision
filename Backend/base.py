@@ -3,6 +3,11 @@ import threading
 from AI_MODEL.model1 import main, args
 
 app = Flask(__name__)
+from flask import Flask
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'
+
 # Define a function to run main(args) in a separate thread
 def run_model(id):
     main(args,id)

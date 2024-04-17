@@ -1,6 +1,7 @@
+import bcrypt
 import mysql.connector as mysql
 import json
-from flask import make_response
+from flask import make_response, redirect, session, url_for
 from datetime import datetime,timedelta, timezone
 import jwt # for generating token
 from config.config import db_config
@@ -41,18 +42,29 @@ class user():
 
     def user_signup(self,data):
         print(data)
-        self.cursor.execute(f"INSERT INTO USERS(firstname,lastname,email,phone,password) VALUES('{data['firstname']}','{data['lastname']}','{data['email']}','{data['phone']}','{data['password']}')")
+        password = data["password"]
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt())
+        print(hashed_password)
+        self.cursor.execute("INSERT INTO users (firstname,lastname,email,phone,password) VALUES (%s,%s,%s,%s,%s)",(data["firstname"],data["lastname"],data["email"],data["phone"],hashed_password))
         return make_response({"message":"User created successfully"},201)
     
     def user_login(self, data):
+        ress = make_response({"message":"Invalid Credentials"},401)
+        ress.headers["Access-Control-Allow-Origin"] = "*"
         # print(data)
-        self.cursor.execute(f"SELECT id, firstname,lastname, phone, avatar, role_id, model_status FROM users WHERE email='{data['email']}' and password= '{data['password']}' ")
+        password = data["password"]
+        self.cursor.execute(f"SELECT id, firstname,lastname, phone, avatar, role_id, model_status, password FROM users WHERE email='{data['email']}'")
         result = self.cursor.fetchall()
         try:
             userdata = result[0]
         except:
-            return make_response({"message":"Invalid Credentials"},401)
-
+            return ress
+        database_password = result[0]["password"]
+        if bcrypt.checkpw(password.encode('utf-8'), database_password.encode('utf-8')) == False:
+            return ress
+        
+        session['user_id'] = userdata["id"]
+        session['role_id'] = userdata["role_id"]
 
         expiry = datetime.now() + timedelta(minutes=15)
         exp_epoch_time = int(expiry.timestamp())
@@ -62,7 +74,17 @@ class user():
         }
         jwtoken = jwt.encode(payload,"kushal",algorithm="HS256")
         # print(jwtoken)
-        return make_response({"token":jwtoken},200)
+        res = make_response({"token":jwtoken},200)
+        res.headers["Access-Control-Allow-Origin"] = "*"
+        return res
+    
+    def user_logout(self):
+        # print(data)
+        try:
+            session.clear()
+            return redirect(url_for('login'))
+        except:
+            return make_response({"message":"logout successful"},201)
     
     def user_update(self,data):
         print(data)
@@ -147,7 +169,9 @@ class user():
             model_thread.start()
             self.cursor.execute(f"UPDATE users SET model_status=1 WHERE id={uid}")
             is_model_running = 1
-
+        else:
+            return make_response({"message":"model already ON"},200)
+        
         if is_model_running==1:
             return make_response({"message":"model turned ON"},200)
         else:
@@ -159,3 +183,15 @@ class user():
             return make_response({"message": "model turned OFF"}, 200)
         else:
             return make_response({"message": "Model already OFF"}, 400)
+        
+    def user_profile(self,uid):
+        self.cursor.execute(f"SELECT firstname,lastname,email,phone FROM users WHERE id={uid}")
+        result = self.cursor.fetchall()
+        if len(result)>0:
+            # print(result)
+            res = make_response({"payload":result},200)
+            res.headers["Access-Control-Allow-Origin"] = "*"
+            return res   # in json format
+            # return result  # in json format
+        else:
+            return make_response({"message":"No data found!"}, 204)
