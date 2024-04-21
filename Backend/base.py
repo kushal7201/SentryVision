@@ -1,11 +1,14 @@
 from flask import Flask
 import threading
+
+from flask_cors import CORS
 from AI_MODEL.model1 import main, args
 
 app = Flask(__name__)
 from flask import Flask
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = 'your_secret_key_here'
 
 # Define a function to run main(args) in a separate thread

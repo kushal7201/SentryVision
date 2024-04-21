@@ -26,7 +26,7 @@ buffer = 1
 
 def setBuffer():
     global buffer
-    time.sleep(120)
+    time.sleep(30)
     buffer = 1
 
 
@@ -152,17 +152,19 @@ def predict_on_video(id,video_file_path, model, SEQUENCE_LENGTH, skip=2, showInf
                 obj.cursor.execute(select_query)
                 result = obj.cursor.fetchone()
 
-                if result and result['videos']:  # If videos column is not empty
-                    videos_list = result['videos'].split(',')
-                    videos_list.append(random_name)
-                    updated_videos = ','.join(videos_list)
-                    update_query = f"UPDATE users SET videos = '{updated_videos}' WHERE id = {user_id}"
-                    obj.cursor.execute(update_query)
-                else:
-                    update_query = f"UPDATE users SET videos = '{random_name}' WHERE id = {user_id}"
-                    obj.cursor.execute(update_query)
                 if buffer == 1:
+                    print("ready again")
                     buffer = 0
+                    if result and result['videos']:  # If videos column is not empty
+                        videos_list = result['videos'].split(',')
+                        videos_list.append(random_name)
+                        updated_videos = ','.join(videos_list)
+                        update_query = f"UPDATE users SET videos = '{updated_videos}' WHERE id = {user_id}"
+                        obj.cursor.execute(update_query)
+                    else:
+                        update_query = f"UPDATE users SET videos = '{random_name}' WHERE id = {user_id}"
+                        obj.cursor.execute(update_query)
+
                     buffer_thread = threading.Thread(target=setBuffer)
                     buffer_thread.start()
                     emailQuery = f"SELECT email FROM users WHERE id = {user_id}"

@@ -45,12 +45,14 @@ class user():
         password = data["password"]
         hashed_password = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt())
         print(hashed_password)
-        self.cursor.execute("INSERT INTO users (firstname,lastname,email,phone,password) VALUES (%s,%s,%s,%s,%s)",(data["firstname"],data["lastname"],data["email"],data["phone"],hashed_password))
-        return make_response({"message":"User created successfully"},201)
+        try:
+            self.cursor.execute("INSERT INTO users (firstname,lastname,email,phone,password) VALUES (%s,%s,%s,%s,%s)",(data["firstname"],data["lastname"],data["email"],data["phone"],hashed_password))
+            return make_response({"message":"User created successfully"},201)
+        except:
+            return make_response({"message":"Duplicate entry NOT allowed"},400)
+        
     
     def user_login(self, data):
-        ress = make_response({"message":"Invalid Credentials"},401)
-        ress.headers["Access-Control-Allow-Origin"] = "*"
         # print(data)
         password = data["password"]
         self.cursor.execute(f"SELECT id, firstname,lastname, phone, avatar, role_id, model_status, password FROM users WHERE email='{data['email']}'")
@@ -58,15 +60,15 @@ class user():
         try:
             userdata = result[0]
         except:
-            return ress
+            return make_response({"message":"Invalid Credentials"},401)
         database_password = result[0]["password"]
         if bcrypt.checkpw(password.encode('utf-8'), database_password.encode('utf-8')) == False:
-            return ress
+            return make_response({"message":"Invalid Credentials"},401)
         
-        session['user_id'] = userdata["id"]
-        session['role_id'] = userdata["role_id"]
+        # session['user_id'] = userdata["id"]
+        # session['role_id'] = userdata["role_id"]
 
-        expiry = datetime.now() + timedelta(minutes=15)
+        expiry = datetime.now() + timedelta(days=15)
         exp_epoch_time = int(expiry.timestamp())
         payload = {
             "payload":userdata,
@@ -74,9 +76,8 @@ class user():
         }
         jwtoken = jwt.encode(payload,"kushal",algorithm="HS256")
         # print(jwtoken)
-        res = make_response({"token":jwtoken},200)
-        res.headers["Access-Control-Allow-Origin"] = "*"
-        return res
+        # res.headers["Access-Control-Allow-Origin"] = "*"
+        return make_response({"token":jwtoken},200)
     
     def user_logout(self):
         # print(data)
@@ -134,10 +135,14 @@ class user():
         
     def user_upload_avatar(self,uid,path):
         self.cursor.execute(f"UPDATE users SET avatar = '{path}' WHERE id = {uid}")
+        res_suc = make_response({"message":"File uploaded successfully"},200)
+        res_fail = make_response({"message":"Upload failed!"},500)
+        res_suc.headers["Access-Control-Allow-Origin"] = "*" 
+        res_fail.headers["Access-Control-Allow-Origin"] = "*" 
         if self.cursor.rowcount>0:
-            return make_response({"message":"File uploaded successfully"},200)
+            return res_suc
         else:
-            return make_response({"message":"Upload failed!"},202)
+            return res_suc
         
     def user_home(self,uid):
         self.cursor.execute(f"SELECT * FROM users WHERE id = {uid}")
@@ -170,7 +175,7 @@ class user():
             self.cursor.execute(f"UPDATE users SET model_status=1 WHERE id={uid}")
             is_model_running = 1
         else:
-            return make_response({"message":"model already ON"},200)
+            return make_response({"message":"model already ON"},400)
         
         if is_model_running==1:
             return make_response({"message":"model turned ON"},200)
@@ -185,7 +190,7 @@ class user():
             return make_response({"message": "Model already OFF"}, 400)
         
     def user_profile(self,uid):
-        self.cursor.execute(f"SELECT firstname,lastname,email,phone FROM users WHERE id={uid}")
+        self.cursor.execute(f"SELECT firstname,lastname,email,phone,avatar,id FROM users WHERE id={uid}")
         result = self.cursor.fetchall()
         if len(result)>0:
             # print(result)
@@ -195,3 +200,29 @@ class user():
             # return result  # in json format
         else:
             return make_response({"message":"No data found!"}, 204)
+        
+    def user_change_password(self,data,uid):
+        print(data)
+        cur_password = data["cur_password"]
+        new_password = data["new_password"]
+
+        self.cursor.execute(f"SELECT id, firstname,lastname, phone, avatar, role_id, model_status, password FROM users WHERE id='{uid}'")
+        check_pass = self.cursor.fetchall()
+        try:
+            userdata = check_pass[0]
+        except:
+            return make_response({"message":"Invalid Credentials"},401)
+        database_password = check_pass[0]["password"]
+
+        if bcrypt.checkpw(cur_password.encode('utf-8'), database_password.encode('utf-8')) == False:
+            return make_response({"message":"Invalid Credentials"},401)
+        # print(cur_password,new_password)
+        hashed_password = bcrypt.hashpw(new_password.encode('utf-8'),bcrypt.gensalt())
+        hashed_password = f"{hashed_password}"[1:]
+
+        query = f"UPDATE users SET password={hashed_password} WHERE id={uid}"
+        try:
+            self.cursor.execute(query)
+            return make_response({"message":"Password changed successfully"},201)
+        except Exception as e:
+            return make_response({"message":f"{e} Failed to change the password"},500)

@@ -11,6 +11,14 @@ from model.auth import *
 user_obj = user()
 auth_obj = auth()
 
+def getUID(token):
+    try:
+        jwt_decoded = jwt.decode(token,"kushal",algorithms="HS256")
+        uid = jwt_decoded['payload']['id']
+        return uid
+    except jwt.ExpiredSignatureError:
+        return -1
+
 @app.route("/users")
 @auth_obj.token_auth()
 def user():
@@ -30,17 +38,17 @@ def login():
 def logout():
     return user_obj.user_logout()
 
-@app.route("/user/<uid>/profile")
-# @app.route("/user/profile")
-def profile(uid):
-# def profile():
-#     data = {
-#         "firstname":"Kushal",
-#         "lastname":"Bansal"
-#     }
-#     return data
-    if "user_id" in session:
-        return user_obj.user_profile(uid)
+# @app.route("/user/<uid>/profile")
+@app.route("/user/profile",methods=["POST"])
+def profile():
+    token = request.form["token"]
+    uid = getUID(token)
+    
+    if uid == -1:
+        return make_response({"message":"Token expired"},201)
+
+    # return make_response({"message":"User created successfully"},201)
+    return user_obj.user_profile(uid)
 
 @app.route("/user/update", methods=["PUT"])
 def update():
@@ -60,7 +68,7 @@ def delete(id):
 def pagination(limit,page):
     return user_obj.user_pagination(int(limit),int(page))
 
-@app.route("/user/<uid>/upload/avatar",methods=["PUT"])
+@app.route("/user/<uid>/upload/avatar",methods=["POST"])
 def upload_avatar(uid):
 
     ### for multiple file uploads:
@@ -73,10 +81,11 @@ def upload_avatar(uid):
     
     file = request.files['avatar']
     print(file)
-    Uniquefile =  str(datetime.now().timestamp()).replace(".","")
+    # Uniquefile =  str(datetime.now().timestamp()).replace(".","")
     extension = file.filename.split(".")[-1]  # file extension
 
-    path = f"uploads/{uid}_{Uniquefile}.{extension}"
+    # path = f"uploads/{uid}_{Uniquefile}.{extension}"
+    path = f"uploads/{uid}.{extension}"
     file.save(path)
 
     return user_obj.user_upload_avatar(uid,path)
@@ -90,16 +99,32 @@ def get_recorded_video(filename):
     video_path = rf'AI_MODEL\bin\{filename}'
     return send_file(video_path, as_attachment=True)
 
-@app.route("/user/<uid>/home")
-def dashboard(uid):
+@app.route("/user/home",methods=["POST"])
+def dashboard():
+    token = request.form["token"]
+    uid = getUID(token)
+    
+    if uid == -1:
+        return make_response({"message":"Token expired"},201)
+
     return user_obj.user_home(uid)
 
-@app.route("/user/<uid>/home/turnon")
-def model_turnon(uid):
+@app.route("/user/home/turnon",methods=["POST"])
+def model_turnon():
+    token = request.form["token"]
+    uid = getUID(token)
+    
+    if uid == -1:
+        return make_response({"message":"Token expired"},201)
     return user_obj.user_model_turnon(uid)
 
-@app.route("/user/<uid>/home/turnoff")
-def model_turnoff(uid):
+@app.route("/user/home/turnoff",methods=["POST"])
+def model_turnoff():
+    token = request.form["token"]
+    uid = getUID(token)
+    
+    if uid == -1:
+        return make_response({"message":"Token expired"},201)
     return user_obj.user_model_turnoff(uid)
 
 # time.sleep(2.0)
@@ -137,6 +162,18 @@ def video_feed():
     video_thread.start()
     return Response(gen_frames(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route("/user/password",methods=["POST"])
+def change_password():
+    token = request.form["token"]
+    uid = getUID(token)
+    
+    if uid == -1:
+        return make_response({"message":"Token expired"},201)
+    data = request.form
+    print(data)
+    # return make_response({"message":"updated"},201)
+    return user_obj.user_change_password(data,uid)
 
 # @app.route("/user/logout")
 # def logout():

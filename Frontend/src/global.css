@@ -1,0 +1,108 @@
+/* scrollbar */
+@import 'simplebar-react/dist/simplebar.min.css';
+
+.anom-alerts {
+    padding: 20px;
+}
+
+.animated-fill-on {
+    padding: 8px;
+    background: rgb(56, 174, 56);
+    color: white;
+    border: 1px solid rgb(56, 174, 56);
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: 0.3s all ease-in-out;
+    border-radius: 4px;
+}
+
+.animated-fill-on:hover {
+    /* background: green; */
+    background: none;
+    color: black;
+}
+
+.animated-fill-off {
+    margin-left: 20px;
+    padding: 8px;
+    background: none;
+    color: black;
+    /* border: 3px solid rgb(255, 176, 167); */
+    border: none;
+    cursor: pointer;
+
+    transition: 0.3s all ease-in-out;
+    border-radius: 4px;
+}
+
+.animated-fill-off:hover {
+    /* background: green; */
+    background: rgb(244, 70, 51);
+    color: white;
+}
+
+.logo {
+    margin-left: 20px;
+    margin-top: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.sentryvision {
+    font-size: 25px;
+    font-weight: bold;
+    color: black;
+    padding: 15px;
+    padding-bottom: 20px;
+}
+
+.upload-btn {
+    color: white;
+    background-color: rgb(24, 119, 242);
+    border: none;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 4px;
+}
+
+.submit-btn {
+    background: none !important;
+    color: black !important;
+    border: 1px solid black !important;
+}
+
+.submit-btn:hover {
+    color: white !important;
+    background: rgb(24, 119, 242) !important;
+}
+
+.about-us-div {
+    padding: 30px;
+}
+
+.card {
+    padding: 20px;
+    margin: 15px;
+    width: 300px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.1);
+}
+
+.cards-display {
+    display: flex;
+    flex-wrap: wrap;
+    
+    /* justify-content: space-between; */
+}
+
+.details{
+    font-size: 15px ;
+    font-weight:lighter;
+}
+
+.gridtag{
+    display: flex;
+    flex-wrap: wrap;
+}
