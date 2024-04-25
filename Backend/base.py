@@ -9,7 +9,7 @@ from flask import Flask
 
 app = Flask(__name__)
 CORS(app)
-app.secret_key = 'your_secret_key_here'
+app.secret_key = 'ebb0017f0bf8a59a607d6b06ac3bca2e05e810da06b703275166ea5b922b1a0a'
 
 # Define a function to run main(args) in a separate thread
 def run_model(id):

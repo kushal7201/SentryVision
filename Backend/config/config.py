@@ -1,6 +1,6 @@
 db_config ={
     "hostname":"127.0.0.1",
     "username" :"root",
-    "password" : "password_here",
+    "password" : "kushal321",
     "database" : "sentryvision"
 }

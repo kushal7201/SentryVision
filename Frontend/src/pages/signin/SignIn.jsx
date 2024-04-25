@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
+import { ToastContainer } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
- 
+
 import AuthContext from 'src/auth/authContext'; // Adjust the import path as necessary
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
@@ -19,7 +20,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 // import ToggleButton from '@mui/material/ToggleButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 // import { fetchDetails } from 'src/_mock/account';
@@ -85,6 +85,7 @@ function SignIn() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <ToastContainer />
       <Container
         component="main"
         style={{

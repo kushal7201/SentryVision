@@ -26,7 +26,8 @@ buffer = 1
 
 def setBuffer():
     global buffer
-    time.sleep(30)
+    time.sleep(35)
+    print("READY AGAIN|||||||||||||")
     buffer = 1
 
 
@@ -153,7 +154,6 @@ def predict_on_video(id,video_file_path, model, SEQUENCE_LENGTH, skip=2, showInf
                 result = obj.cursor.fetchone()
 
                 if buffer == 1:
-                    print("ready again")
                     buffer = 0
                     if result and result['videos']:  # If videos column is not empty
                         videos_list = result['videos'].split(',')

@@ -1,5 +1,7 @@
 import React from 'react';
+import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -22,7 +24,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 function SignUp() {
   // const [showPassword, setShowPassword] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
-const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const navigate = useNavigate();
   // const { login } = useContext(AuthContext);
@@ -36,13 +38,29 @@ const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission behavior
-    console.log(`Username: ${phone}`)
-    console.log(`Username: ${firstName}`)
-    console.log(`Username: ${lastName}`)
-    console.log(`Username: ${email}`)
-    console.log(`Username: ${password}`)
-    console.log(`Username: ${confirmPassword}`)
+
+    if (!phone || !firstName || !lastName || !email || !password || !confirmPassword) {
+      setErrorMessage("Please fill in all required fields.");
+      return; // Stop the function if any required field is empty
+    }
+
+    console.log(`phone: ${phone}`)
+    console.log(`firstname: ${firstName}`)
+    console.log(`lastname: ${lastName}`)
+    console.log(`email: ${email}`)
+    console.log(`password: ${password}`)
+    console.log(`confirmPassword: ${confirmPassword}`)
     // console.log(`Username: ${err}`)
+
+    event.preventDefault();
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match");
+      if (navigator.vibrate) {
+        navigator.vibrate(100);
+      }
+      return;
+    }
+
     try {
       const formData = new FormData();
       formData.append('phone', phone);
@@ -58,73 +76,66 @@ const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        setErrorMessage(errorData.detail);
-        throw new Error('Username OR Email already exist!');
+        // const errorData = await response.json();
+        // setErrorMessage(errorData.detail);
+        toast.error("Email OR Phone no. already exist", {
+          position: "top-right",
+          autoClose: 3000, // Close the toast after 3 seconds
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        throw new Error('Email OR Phone no. already exist!');
       } else {
         console.log('Signup successfull:');
+        navigate('/sign-in');
+        toast.success("Signup successfull", {
+          position: "top-right",
+          autoClose: 3000, // Close the toast after 3 seconds
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         // Handle successful signup
         // Redirect or display success message
-          navigate('/sign-in');
-          //  login(); // Update the login state
-          //  navigate('/'); // Redirect to the dashboard
+        //  login(); // Update the login state
+        //  navigate('/'); // Redirect to the dashboard
       }
     } catch (error) {
       console.error('Error:', error);
-      setErrorMessage('An error occurred while signing up. Please try again later.');
+      // setErrorMessage('An error occurred while signing up. Please try again later.');
     }
+
+    setErrorMessage("");
   };
 
-    // event.preventDefault();
-    // if (password !== confirmPassword) {
-      //   setErrorMessage("Passwords do not match");
-      //   if (navigator.vibrate) {
-    //     navigator.vibrate(100);
-    //   }
-    //   return;
-    // }
-  
-    // Check if username or email already exist
-    // const checkData = {
-    //   username,
-    //   email,
-    // };
-  
-    // try {
-    //   const checkResponse = await fetch('http://127.0.0.1:8000/api/user/check-unique/', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify(checkData)
-    //   });
-  
-    //   if (!checkResponse.ok) {
-    //     const errorData = await checkResponse.json();
-    //     setErrorMessage(errorData.detail);
-    //     return;
-    //   }
-    // } catch (error) {
-    //   console.error('Error:', error);
-    //   setErrorMessage('An error occurred while checking uniqueness. Please try again later.');
-    //   return;
-    // }
-  
-    // If username and email are unique, proceed to register the user
-    // const data = {
-    //   first_name: firstName,
-    //   last_name: lastName,
-    //   email,
-    //   username,
-    //   password,
-    // };
-  
-  
+
+  // Check if username or email already exist
+  // const checkData = {
+  //   username,
+  //   email,
+  // };
+
+  // If username and email are unique, proceed to register the user
+  // const data = {
+  //   first_name: firstName,
+  //   last_name: lastName,
+  //   email,
+  //   username,
+  //   password,
+  // };
+
+
 
   const defaultTheme = createTheme();
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <ToastContainer />
       <Container
         component="main"
         style={{
@@ -147,7 +158,7 @@ const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
             padding: "20px",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}/>
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }} />
           <Typography component="h1" variant="h5">Sign up</Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
@@ -192,24 +203,24 @@ const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
                   required
                   fullWidth
                   id="phone"
-                  label="phone"
-                  name="phine"
+                  label="Phone"
+                  name="phone"
                   autoComplete="phone"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                InputProps={{
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
@@ -220,34 +231,34 @@ const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
                         </IconButton>
                       </InputAdornment>
                     ),
-                }}
-              />
+                  }}
+                />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                    required
-                    fullWidth
-                    name="confirmPassword"
-                    label="Confirm Password"
-                    type={showConfirmPassword ? "text" : "password"}
-                    autoComplete="new-password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    error={errorMessage !== ""}
-                    helperText={errorMessage}
-                    InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle confirm password visibility"
-                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            >
-                              {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                    }}
-                    />
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  error={errorMessage !== ""}
+                  helperText={errorMessage}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle confirm password visibility"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
               </Grid>
             </Grid>
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>Create a new account</Button>

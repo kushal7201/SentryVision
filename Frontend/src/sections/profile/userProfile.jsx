@@ -1,6 +1,8 @@
 
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 import {
   Grid,
@@ -17,45 +19,54 @@ import { account } from 'src/_mock/account';
 // --- Import statements as belore
 const handleSubmit = async (event) => {
   event.preventDefault(); // Prevent the default form submission
- 
+
   const fileInput = document.getElementById('file');
   const file = fileInput.files[0];
   if (!file) return;
- console.log(fileInput)
+  console.log(fileInput)
   const formData = new FormData();
   formData.append('avatar', file);
- 
+
   try {
-     const response = await fetch(`http://localhost:5000/user/${account.id}/upload/avatar`, {
-       method: 'POST',
-       body: formData,
-     });
- 
-     if (!response.ok) {
-       throw new Error('Network response was not ok');
-     }
- 
-     const data = await response.json();
-     console.log('Upload successful:', data);
-     // Handle the response data as needed
+    const response = await fetch(`http://localhost:5000/user/${account.id}/upload/avatar`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    toast.success("Upload successfull", {
+      position: "top-right",
+      autoClose: 3000, // Close the toast after 3 seconds
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+    const data = await response.json();
+    console.log('Upload successful:', data);
+    window.location.reload()
+    // Handle the response data as needed
   } catch (error) {
-     console.error('Error uploading image:', error);
+    console.error('Error uploading image:', error);
   }
- };
- 
+};
+
 
 function ImageUpload() {
   return (
-     <form id="form" encType='multipart/form-data' onSubmit={handleSubmit}>
-       <input
-         type="file"
-         id="file"
-       />
-       <button className='upload-btn submit-btn' type="submit">Upload</button>
-     </form>
+    <form id="form" encType='multipart/form-data' onSubmit={handleSubmit}>
+      <input
+        type="file"
+        id="file"
+      />
+      <button className='upload-btn submit-btn' type="submit">Upload</button>
+    </form>
   );
- }
- 
+}
+
 
 // console.log(`the id is: ${account.id}`)
 
@@ -132,9 +143,15 @@ function UserProfile({ user, onChange }) {
         return;
       }
       console.log("Password Updated successfully")
-      // const userData = await response.json();
-      // console.log(userData.payload[0].firstname)
-      // return await userData;
+      toast.success("Password Updated successfully", {
+        position: "top-right",
+        autoClose: 3000, // Close the toast after 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } catch (e) {
       console.error('Error updating the password:', e.message);
       // return null;
@@ -152,6 +169,7 @@ function UserProfile({ user, onChange }) {
     <Stack spacing={2}>
       <Grid container spacing={4}>
         <Grid item xs={12} md={12} mb={5}>
+          <ToastContainer />
           <Avatar alt="Profile Photo" src={profilePhoto} sx={{ width: 150, height: 150 }} />
           <input
             accept="image/*"
@@ -224,16 +242,16 @@ function UserProfile({ user, onChange }) {
           />
         </Grid>
       </Grid>
+      {error && <Alert severity="error">{error}</Alert>}
       <Button className='submit-btn'
         variant="contained"
         color="primary"
         onClick={handleSavePassword}
-        sx={{ width: 'fit-content'}}
+        sx={{ width: 'fit-content' }}
         style={{ marginLeft: '30px' }}
       >
-        Save Password
+        Change Password
       </Button>
-      {error && <Alert severity="error">{error}</Alert>}
     </Stack>
   );
 }

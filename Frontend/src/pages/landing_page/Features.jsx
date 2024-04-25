@@ -22,7 +22,7 @@ LandingCard.propTypes = {
 
 export default function Features() {
   return (
-    <Container id="features" sx={{ py: { xs: 2, sm: 2 } }}>
+    <Container id="aboutUs" sx={{ py: { xs: 2, sm: 2 } }}>
       {/* About Us Section */}
       <Box sx={{ textAlign: { xs: "center", sm: "start" }, mb: 6 }}>
         <Typography variant="h2" component="div" gutterBottom color="#091553">
@@ -45,7 +45,7 @@ export default function Features() {
       </Box>
 
       {/* How It Works Section */}
-      <Box>
+      <Box id="features">
         <Typography
           variant="h2"
           component="div"

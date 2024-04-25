@@ -1,3 +1,4 @@
+import os
 import bcrypt
 import mysql.connector as mysql
 import json
@@ -74,7 +75,7 @@ class user():
             "payload":userdata,
             "exp":exp_epoch_time  # exp should be only named for expiration time
         }
-        jwtoken = jwt.encode(payload,"kushal",algorithm="HS256")
+        jwtoken = jwt.encode(payload,"ebb0017f0bf8a59a607d6b06ac3bca2e05e810da06b703275166ea5b922b1a0a",algorithm="HS256")
         # print(jwtoken)
         # res.headers["Access-Control-Allow-Origin"] = "*"
         return make_response({"token":jwtoken},200)
@@ -226,3 +227,29 @@ class user():
             return make_response({"message":"Password changed successfully"},201)
         except Exception as e:
             return make_response({"message":f"{e} Failed to change the password"},500)
+    
+    def user_delete_video(self,filename,uid):
+        filename = str(filename)
+        video_path = rf'AI_MODEL\bin\{filename}'
+
+        self.cursor.execute(f"SELECT id, firstname,lastname, phone, avatar, role_id, model_status, videos FROM users WHERE id='{uid}'")
+        result = self.cursor.fetchall()
+        try:
+            userdata = result[0]
+        except:
+            return make_response({"message":"Internal Server Error"},401)
+        videos = json.loads(f"[{userdata['videos']}]")
+        video_list = []
+        for vid in videos:
+            vid = str(vid)
+            if f"{vid}.mp4" != filename:
+                video_list.append(vid)
+        updated_videos = ','.join(video_list)
+        update_query = f"UPDATE users SET videos = '{updated_videos}' WHERE id = {uid}"
+        try:
+            self.cursor.execute(update_query)
+            os.remove(video_path)
+            return make_response({"message":"Video Deleted Successfully"},201)
+
+        except Exception as e:
+            return make_response({"message":f"{e} Failed to delete the video"},500)

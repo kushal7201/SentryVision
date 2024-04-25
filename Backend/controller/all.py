@@ -13,7 +13,7 @@ auth_obj = auth()
 
 def getUID(token):
     try:
-        jwt_decoded = jwt.decode(token,"kushal",algorithms="HS256")
+        jwt_decoded = jwt.decode(token,"ebb0017f0bf8a59a607d6b06ac3bca2e05e810da06b703275166ea5b922b1a0a",algorithms="HS256")
         uid = jwt_decoded['payload']['id']
         return uid
     except jwt.ExpiredSignatureError:
@@ -69,16 +69,7 @@ def pagination(limit,page):
     return user_obj.user_pagination(int(limit),int(page))
 
 @app.route("/user/<uid>/upload/avatar",methods=["POST"])
-def upload_avatar(uid):
-
-    ### for multiple file uploads:
-    # files = request.files.getlist('avatar')
-    # for file in files:
-    #     if file and file.filename != '':
-    #         # Save each file to the server
-    #         # You might want to generate a unique filename for each file
-    #         file.save(secure_filename(f"uploads/{file.filename}"))
-    
+def upload_avatar(uid):    
     file = request.files['avatar']
     print(file)
     # Uniquefile =  str(datetime.now().timestamp()).replace(".","")
@@ -98,6 +89,16 @@ def get_avatar(filename):
 def get_recorded_video(filename):
     video_path = rf'AI_MODEL\bin\{filename}'
     return send_file(video_path, as_attachment=True)
+
+@app.route('/videos/delete/<filename>', methods=['DELETE'])
+def delete_video(filename):
+    token = request.form["token"]
+    uid = getUID(token)
+    
+    if uid == -1:
+        return make_response({"message":"Token expired"},201)
+    
+    return user_obj.user_delete_video(filename,uid)
 
 @app.route("/user/home",methods=["POST"])
 def dashboard():

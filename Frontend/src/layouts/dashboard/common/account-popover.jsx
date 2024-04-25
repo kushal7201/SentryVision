@@ -3,6 +3,7 @@ import {  Link, useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Popover from '@mui/material/Popover';
 import { alpha } from '@mui/material/styles';
@@ -12,7 +13,11 @@ import IconButton from '@mui/material/IconButton';
 
 import { account } from 'src/_mock/account';
 import AuthContext from 'src/auth/authContext'; // Adjust the import path as necessary
-
+import { Dialog } from '@mui/material';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +34,33 @@ import AuthContext from 'src/auth/authContext'; // Adjust the import path as nec
 
 // ----------------------------------------------------------------------
 
+// export function DialogBox({heading,type}){
+//   const [DialogOpen, setDialogOpen] = useState(false);
+//   return(
+//     <Dialog
+//       open={DialogOpen}
+//       onClose={() => setDialogOpen(false)}
+//       aria-labelledby="alert-dialog-title"
+//       aria-describedby="alert-dialog-description"
+//     >
+//       <DialogTitle id="alert-dialog-title">{type}</DialogTitle>
+//       <DialogContent>
+//         <DialogContentText id="alert-dialog-description">
+//           {heading}
+//         </DialogContentText>
+//       </DialogContent>
+//       <DialogActions>
+//         <Button onClick={() => setDialogOpen(false)} color="primary">
+//           Okay
+//         </Button>
+//       </DialogActions>
+//     </Dialog>
+//   )
+
+// }
+
 export default function AccountPopover() {
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [open, setOpen] = useState(null);
  const navigate = useNavigate();
  const { logout } = useContext(AuthContext);
@@ -145,13 +176,33 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleLogout} // Attach the logout function here
+          onClick={() => setLogoutDialogOpen(true)} // Open the dialog
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout
         </MenuItem>
       </Popover>
-      
+      <Dialog
+        open={logoutDialogOpen}
+        onClose={() => setLogoutDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Confirm Logout</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to logout?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLogoutDialogOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleLogout} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
