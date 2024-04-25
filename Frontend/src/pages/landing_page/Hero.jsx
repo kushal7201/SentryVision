@@ -8,8 +8,6 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 
-import Image from "src/assets/assets/25326158_na_feb_37.jpg"; // Import your image
-
 
 export default function Hero() {
   return (
@@ -61,7 +59,7 @@ export default function Hero() {
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <img src={Image} alt="Student Vector" style={{ maxWidth: '100%', height: 'auto' }} />
+            <img src="assets/4.png" className="landing-image" alt="Sentry Vision" style={{ maxWidth: '100%', height: 'auto' }} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <Link to="/sign-in" style={{ textDecoration: 'none' }}>
