@@ -22,6 +22,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 function SignUp() {
+  const [phoneError, setPhoneError] = React.useState("");
   // const [showPassword, setShowPassword] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
@@ -36,7 +37,20 @@ function SignUp() {
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState("");
 
+  const validatePhone = (inputPhone) => {
+    const pattern = /^[1-9][0-9]{9}$/; // Regular expression for the pattern
+    if (!pattern.test(inputPhone)) {
+      setPhoneError("Invalid phone number format.");
+    } else {
+      setPhoneError("");
+    }
+  };
+
   const handleSubmit = async (event) => {
+
+    if(phoneError !== "") {
+      return;
+    }
     event.preventDefault(); // Prevent default form submission behavior
 
     if (!phone || !firstName || !lastName || !email || !password || !confirmPassword) {
@@ -100,10 +114,6 @@ function SignUp() {
           draggable: true,
           progress: undefined,
         });
-        // Handle successful signup
-        // Redirect or display success message
-        //  login(); // Update the login state
-        //  navigate('/'); // Redirect to the dashboard
       }
     } catch (error) {
       console.error('Error:', error);
@@ -208,7 +218,15 @@ function SignUp() {
                   autoComplete="phone"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  onBlur={() => validatePhone(phone)}
+                  error={phoneError !== ""}
+                  helperText={phoneError}
+                  inputProps={{
+                    pattern: "[1-9][0-9]{9}",
+                    placeholder: "ex: 7123456786"
+                  }}
                 />
+
               </Grid>
               <Grid item xs={12}>
                 <TextField
