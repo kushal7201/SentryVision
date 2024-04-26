@@ -29,6 +29,21 @@ SentryVision is an innovative real-time video anomaly detection system designed 
 - Install dependencies by running ```npm install```
 - Run the Frontend by ```npm run dev```
 
+### SentryVision UI
+
+
+#### Landing Page:
+![preview](Frontend/public/assets/landing.png)
+
+#### Dashboard Page:
+![preview](Frontend/public/assets/dashboard.png)
+
+#### Profile Page:
+![preview](Frontend/public/assets/profile.png)
+
+#### About Us Page:
+![preview](Frontend/public/assets/about.png)
+
 
 ### Contact
 If you have any questions or need assistance with SentryVision, please contact us at mailto:sentryvision112@gmail.com. We are always happy to help!
