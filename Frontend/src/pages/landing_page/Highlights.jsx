@@ -48,13 +48,6 @@ export default function Highlights() {
               </ul>
             </Typography>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <img
-              src={Image}
-              alt="Student Vector"
-              style={{ maxWidth: "100%", height: "auto" }}
-            />
-          </Grid>
           <Grid item xs={12} sm={12} sx={{ textAlign: "center" }}>
             <Grid
               item

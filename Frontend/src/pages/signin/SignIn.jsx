@@ -112,17 +112,7 @@ function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          {/* <ToggleButtonGroup
-            color="primary"
-            value={alignment}
-            exclusive
-            onChange={handleChange}
-            aria-label="Platform"
-            sx={{ mt: 2 }}
-          >
-            <ToggleButton value="Student">User</ToggleButton>
-            <ToggleButton value="Admin">Admin</ToggleButton>
-          </ToggleButtonGroup> */}
+          
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
                 margin="normal"
