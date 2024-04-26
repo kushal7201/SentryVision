@@ -19,7 +19,6 @@ SentryVision is an innovative real-time video anomaly detection system designed 
 ### Get Started
 - Clone the SentryVision repository to your local machine.
 - Navigate to the ```Backend``` directory in VS Code.
-- Install the required dependencies using [insert relevant package manager].
 - Create a database according to the given schema: ```Backend\prisma\schema.prisma``` 
 - Configure the environment variables in the ```Backend\config\config.py```
 - Create a virtual environment: ```python -m venv venv```
