@@ -26,7 +26,7 @@ SentryVision is an innovative real-time video anomaly detection system designed 
 - Start the Backend server by running ```flask run --debug```
 - Open another VS code instance and navigate to the  ```Frontend``` directory
 - Install dependencies by running ```npm install```
-- Run the Frontend by ```npm run dev```
+- Start the Frontend server by running ```npm run dev```
 
 ### SentryVision UI
 
