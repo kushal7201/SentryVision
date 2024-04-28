@@ -53,5 +53,6 @@ SentryVision is an innovative real-time video anomaly detection system designed 
 <a href="https://github.com/bhagat-2306" title="bhagat-2306">
         <img src="https://github.com/bhagat-2306.png" width="70px" alt="Prernendu Bhagat">
 </a>
+
 ### Contact
 If you have any questions or need assistance with SentryVision, please contact us at mailto:sentryvision112@gmail.com. We are always happy to help!
