@@ -44,14 +44,15 @@ SentryVision is an innovative real-time video anomaly detection system designed 
 ![preview](Frontend/public/assets/about.png)
 
 ### Contributors:
-<a href="https://github.com/Piyush-Raj-Tiwari" title="Piyush-Raj-Tiwari">
-        <img src="https://github.com/Piyush-Raj-Tiwari.png" width="70px" alt="Piyush Tiwari">
+
+<a href="https://github.com/Piyush-Raj-Tiwari" title="Piyush-Raj-Tiwari" style="text-decoration: none;">
+    <img src="https://github.com/Piyush-Raj-Tiwari.png" width="70px" alt="Piyush Tiwari" style="border-radius: 50%;">
 </a>
-<a href="https://github.com/Hannah2k23" title="Hannah2k23">
-        <img src="https://github.com/Hannah2k23.png" width="70px" alt="Mansa Mahendru">
+<a href="https://github.com/Hannah2k23" title="Hannah2k23" style="text-decoration: none;">
+    <img src="https://github.com/Hannah2k23.png" width="70px" alt="Mansa Mahendru" style="border-radius: 50%;">
 </a>
-<a href="https://github.com/bhagat-2306" title="bhagat-2306">
-        <img src="https://github.com/bhagat-2306.png" width="70px" alt="Prernendu Bhagat">
+<a href="https://github.com/bhagat-2306" title="bhagat-2306" style="text-decoration: none;">
+    <img src="https://github.com/bhagat-2306.png" width="70px" alt="Prernendu Bhagat" style="border-radius: 50%;">
 </a>
 
 ### Contact
