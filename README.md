@@ -46,13 +46,19 @@ SentryVision is an innovative real-time video anomaly detection system designed 
 ### Contributors:
 
 <a href="https://github.com/Piyush-Raj-Tiwari" title="Piyush-Raj-Tiwari" style="text-decoration: none;">
-    <img src="https://github.com/Piyush-Raj-Tiwari.png" width="70px" alt="Piyush Tiwari" style="border-radius: 50%;">
+    <div style="display: inline-block; border-radius: 50%; overflow: hidden; width: 70px; height: 70px;">
+        <img src="https://github.com/Piyush-Raj-Tiwari.png" width="100%" alt="Piyush Tiwari">
+    </div>
 </a>
 <a href="https://github.com/Hannah2k23" title="Hannah2k23" style="text-decoration: none;">
-    <img src="https://github.com/Hannah2k23.png" width="70px" alt="Mansa Mahendru" style="border-radius: 50%;">
+    <div style="display: inline-block; border-radius: 50%; overflow: hidden; width: 70px; height: 70px;">
+        <img src="https://github.com/Hannah2k23.png" width="100%" alt="Mansa Mahendru">
+    </div>
 </a>
 <a href="https://github.com/bhagat-2306" title="bhagat-2306" style="text-decoration: none;">
-    <img src="https://github.com/bhagat-2306.png" width="70px" alt="Prernendu Bhagat" style="border-radius: 50%;">
+    <div style="display: inline-block; border-radius: 50%; overflow: hidden; width: 70px; height: 70px;">
+        <img src="https://github.com/bhagat-2306.png" width="100%" alt="Prernendu Bhagat">
+    </div>
 </a>
 
 ### Contact
