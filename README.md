@@ -57,3 +57,6 @@ SentryVision is an innovative real-time video anomaly detection system designed 
 
 ### Contact
 If you have any questions or need assistance with SentryVision, please contact us at mailto:sentryvision112@gmail.com. We are always happy to help!
+
+### License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
