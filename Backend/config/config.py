@@ -1,6 +1,4 @@
-db_config ={
-    "hostname":"127.0.0.1",
-    "username" :"root",
-    "password" : "password_here",
-    "database" : "sentryvision"
+mongodb_config = {
+    "connection_string": "mongodb+srv://devins:RDR8vzi4S8fLTAuH@sentryvision.dwlst.mongodb.net/",
+    "database": "sentryvision"
 }

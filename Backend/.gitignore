@@ -1,2 +1,8 @@
 /vmodel2
 /AI_MODEL/vmodel
+*.jpg
+*.png
+*.jpeg
+*.svg
+*.mp4
+*.pdf

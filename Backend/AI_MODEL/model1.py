@@ -1,7 +1,7 @@
 
 import io
 from base64 import b64encode
-
+from bson import ObjectId
 import os
 import cv2
 import time
@@ -149,30 +149,39 @@ def predict_on_video(id,video_file_path, model, SEQUENCE_LENGTH, skip=2, showInf
                 is_recording = True
                 random_name = str(int(time.time()))
                 user_id = id
-                select_query = f"SELECT videos FROM users WHERE id = {user_id}"
-                obj.cursor.execute(select_query)
-                result = obj.cursor.fetchone()
 
                 if buffer == 1:
                     buffer = 0
-                    if result and result['videos']:  # If videos column is not empty
-                        videos_list = result['videos'].split(',')
+                    # Get user data from MongoDB
+                    user_data = obj.users.find_one({"_id": ObjectId(user_id)})
+                    
+                    if user_data and user_data.get('videos'):
+                        videos_list = user_data['videos'].split(',')
                         videos_list.append(random_name)
                         updated_videos = ','.join(videos_list)
-                        update_query = f"UPDATE users SET videos = '{updated_videos}' WHERE id = {user_id}"
-                        obj.cursor.execute(update_query)
+                        obj.users.update_one(
+                            {"_id": ObjectId(user_id)},
+                            {"$set": {"videos": updated_videos}}
+                        )
                     else:
-                        update_query = f"UPDATE users SET videos = '{random_name}' WHERE id = {user_id}"
-                        obj.cursor.execute(update_query)
+                        obj.users.update_one(
+                            {"_id": ObjectId(user_id)},
+                            {"$set": {"videos": random_name}}
+                        )
 
                     buffer_thread = threading.Thread(target=setBuffer)
                     buffer_thread.start()
-                    emailQuery = f"SELECT email FROM users WHERE id = {user_id}"
-                    obj.cursor.execute(emailQuery)
-                    res = obj.cursor.fetchone()
-                    email = res['email']
+                    
+                    # Get email from MongoDB
+                    user_email = obj.users.find_one(
+                        {"_id": ObjectId(user_id)},
+                        {"email": 1}
+                    )
+                    email = user_email['email']
+                    
                     emailThread = threading.Thread(target=sendMail,args=(email,))
                     emailThread.start()
+                    
                     print(f"Saved video file: AI_MODEL/bin/{random_name}")
                     out = cv2.VideoWriter(rf'AI_MODEL/bin/{random_name}.mp4', fourcc, 30.0, (original_video_width, original_video_height))
         else:
@@ -196,7 +205,7 @@ def predict_on_video(id,video_file_path, model, SEQUENCE_LENGTH, skip=2, showInf
 
         if out is not None:
             out.write(frame)
-        
+       
         cv2.imshow('Video Feed', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
