@@ -8,6 +8,7 @@ import checker from 'vite-plugin-checker';
 export default defineConfig({
   build: {
     target: 'es2022',  // Use ES2022 or a higher version to support top-level await
+    outDir: 'build',
   },
   plugins: [
     react(),
