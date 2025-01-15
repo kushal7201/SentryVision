@@ -3,6 +3,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import checker from 'vite-plugin-checker';
 
+// ----------------------------------------------------------------------
+
 export default defineConfig({
   plugins: [
     react(),
@@ -13,18 +15,19 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    alias: {
-      '~': path.resolve(__dirname, 'node_modules'),
-      src: path.resolve(__dirname, 'src'),
-    },
-  },
-  build: {
-    target: 'esnext', // Use the latest JavaScript features
-    sourcemap: true, // Optional: Generates source maps for debugging
+    alias: [
+      {
+        find: /^~(.+)/,
+        replacement: path.join(process.cwd(), 'node_modules/$1'),
+      },
+      {
+        find: /^src(.+)/,
+        replacement: path.join(process.cwd(), 'src/$1'),
+      },
+    ],
   },
   server: {
     port: 3030,
-    open: true,
   },
   preview: {
     port: 3030,
