@@ -4,9 +4,6 @@
   "licence": "MIT",
   "version": "1.8.0",
   "private": false,
-  "engines": {
-  "node": ">=18"
-  },
   "scripts": {
     "dev": "vite",
     "start": "vite preview",

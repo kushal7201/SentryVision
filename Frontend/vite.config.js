@@ -18,8 +18,13 @@ export default defineConfig({
       src: path.resolve(__dirname, 'src'),
     },
   },
+  build: {
+    outDir: 'dist', // Explicitly define the output directory
+    sourcemap: true, // Optional: Useful for debugging build errors
+  },
   server: {
     port: 3030,
+    open: true, // Automatically open the app in the browser during development
   },
   preview: {
     port: 3030,
