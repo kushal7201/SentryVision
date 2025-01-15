@@ -19,12 +19,12 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'dist', // Explicitly define the output directory
-    sourcemap: true, // Optional: Useful for debugging build errors
+    target: 'esnext', // Use the latest JavaScript features
+    sourcemap: true, // Optional: Generates source maps for debugging
   },
   server: {
     port: 3030,
-    open: true, // Automatically open the app in the browser during development
+    open: true,
   },
   preview: {
     port: 3030,
