@@ -60,10 +60,10 @@ const data = userdata.payload[0]
 
 export const account = {
   displayName: `${data.firstname} ${data.lastname}`,
-  photoURL: `https://sentryvision.onrender.com/${data.avatar}`,
+  photoURL: `${data.avatar}`,
   email: `${data.email}`,
   phone: `${data.phone}`,
-  id: `${data.id}`
+  id: `${data._id}`
 };
 
 console.log(account.photoURL)

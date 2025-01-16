@@ -154,14 +154,31 @@ class user():
     def user_home(self, uid):
         result = self.users.find_one({"_id": ObjectId(uid)})
         if result and result.get('videos'):
-            videos = json.loads(f"[{result['videos']}]")
+            videos = result['videos']
+
+            video_entries = videos.split(',')
+
+            ids = []
+            timestamps1 = []
+
+            # Split each entry into ID and timestamp
+            for entry in video_entries:
+                video_id, timestamp = entry.split('_')
+                ids.append(video_id)
+                timestamps1.append(timestamp)
+
+            # Convert arrays to comma-separated strings if needed
+            ids_string = ','.join(ids)        ### 50a62b3cd350,30a62b3cd350....
+            timestamps1_string = ','.join(timestamps1) ### 13747284,424524,424242....
+
+            videos = json.loads(f"[{timestamps1_string}]")
             target_timezone = pytz.timezone('Asia/Kolkata')
             videos_time = []
             for vid in videos:
                 utc_time = datetime.fromtimestamp(vid, tz=timezone.utc)
                 target_time = utc_time.astimezone(target_timezone)
                 videos_time.append(str(target_time)[:-6])
-            return make_response({"timestamp": videos_time, "videos": videos}, 200)
+            return make_response({"timestamp": videos_time, "videos": video_entries}, 200)
         return make_response({"message": "No data found!"}, 204)
 
     def user_model_turnon(self, uid):
