@@ -84,7 +84,7 @@ function SignUp() {
       formData.append('password', password);
       // formData.append('confirmpassword', confirmPassword);
 
-      const response = await fetch('http://localhost:5000/signup', {
+      const response = await fetch('https://sentryvision.onrender.com/signup', {
         method: 'POST',
         body: formData
       });
@@ -149,6 +149,7 @@ function SignUp() {
       <Container
         component="main"
         style={{
+          marginTop:'3vh',
           maxWidth: 500,
           display: "flex",
           justifyContent: "center",

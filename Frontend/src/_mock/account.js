@@ -11,7 +11,7 @@ export const fetchUserDetails = async () => {
   }
 
   try {
-    const response = await fetch('http://localhost:5000/user/profile', {
+    const response = await fetch('https://sentryvision.onrender.com/user/profile', {
       method: 'POST',
       body: formData, // Directly pass the FormData object
     });
@@ -60,7 +60,7 @@ const data = userdata.payload[0]
 
 export const account = {
   displayName: `${data.firstname} ${data.lastname}`,
-  photoURL: `http://localhost:5000/${data.avatar}`,
+  photoURL: `https://sentryvision.onrender.com/${data.avatar}`,
   email: `${data.email}`,
   phone: `${data.phone}`,
   id: `${data.id}`

@@ -28,7 +28,7 @@ const handleSubmit = async (event) => {
   formData.append('avatar', file);
 
   try {
-    const response = await fetch(`http://localhost:5000/user/${account.id}/upload/avatar`, {
+    const response = await fetch(`https://sentryvision.onrender.com/user/${account.id}/upload/avatar`, {
       method: 'POST',
       body: formData,
     });

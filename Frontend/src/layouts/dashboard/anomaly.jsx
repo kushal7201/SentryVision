@@ -16,7 +16,7 @@ const getAlerts = async () => {
     }
 
     try {
-        const response = await fetch('http://localhost:5000/user/home', {
+        const response = await fetch('https://sentryvision.onrender.com/user/home', {
             method: 'POST',
             body: formData, // Directly pass the FormData object
         });
@@ -63,7 +63,7 @@ export default function Anomaly() {
         }
         
         try {
-            const response = await fetch('http://localhost:5000/user/home/turnon', {
+            const response = await fetch('https://sentryvision.onrender.com/user/home/turnon', {
                 method: 'POST',
                 body: formData, // Directly pass the FormData object
             });
@@ -121,7 +121,7 @@ export default function Anomaly() {
         }
         
         try {
-            const response = await fetch('http://localhost:5000/user/home/turnoff', {
+            const response = await fetch('https://sentryvision.onrender.com/user/home/turnoff', {
                 method: 'POST',
                 body: formData, // Directly pass the FormData object
             });
@@ -177,7 +177,7 @@ export default function Anomaly() {
         }
         
         try {
-            const response = await fetch(`http://localhost:5000/videos/delete/${file}.mp4`, {
+            const response = await fetch(`https://sentryvision.onrender.com/videos/delete/${file}.mp4`, {
                 method: 'DELETE',
                 body: formData, // Directly pass the FormData object
             });
@@ -228,7 +228,7 @@ export default function Anomaly() {
                             <Table.Cell>{timestamp}</Table.Cell>
                             <Table.Cell>
                                 {/* Assuming the video link is a static URL with the video ID as a parameter */}
-                                <a href={`http://localhost:5000/videos/${data.videos[index]}.mp4`}>Link</a>
+                                <a href={`https://sentryvision.onrender.com/videos/${data.videos[index]}.mp4`}>Link</a>
                             </Table.Cell>
                             <Table.Cell><button type='button' className='animated-fill-off' onClick={()=>handleDeleteVideo(data.videos[index])}>Delete</button></Table.Cell>
                         </Table.Row>
