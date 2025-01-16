@@ -72,29 +72,59 @@ from flask_s3 import FlaskS3
 import os
 
 # Add this near the top of your file with other configurations
-s3 = FlaskS3()
-app.config['FLASKS3_BUCKET_NAME'] = 'sentryvision'
-app.config['FLASKS3_BUCKET_NAME'] = 'sentryvision'
-app.config['AWS_ACCESS_KEY_ID'] = os.getenv('AWS_ACCESS_KEY_ID')
-app.config['AWS_SECRET_ACCESS_KEY'] = os.getenv('AWS_SECRET_ACCESS_KEY')
-s3.init_app(app)
+# s3 = FlaskS3()
+# app.config['FLASKS3_BUCKET_NAME'] = 'sentryvision'
+# app.config['AWS_ACCESS_KEY_ID'] = os.getenv('AWS_ACCESS_KEY_ID')
+# app.config['AWS_SECRET_ACCESS_KEY'] = os.getenv('AWS_SECRET_ACCESS_KEY')
+# s3.init_app(app)
+
+import boto3
+import botocore
+
+s3 = boto3.client(
+   "s3",
+   aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+   aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY")
+)
+
+BUCKET_NAME = "sentryvision"
+S3_LOCATION = f"http://{BUCKET_NAME}.s3.amazonaws.com/"
 
 @app.route("/user/<uid>/upload/avatar", methods=["POST"])
 def upload_avatar(uid):
     file = request.files['avatar']
     extension = file.filename.split(".")[-1]
     file_name = f"avatar_{uid}.{extension}"
-    
+
     try:
-        # Upload file using Flask-S3
-        file.filename = file_name
-        s3.upload_fileobj(file, file_name)
-        
-        # Generate URL
-        url = f"https://{app.config['FLASKS3_BUCKET_NAME']}.s3.amazonaws.com/{file_name}"
+        s3.upload_fileobj(
+            file,
+            BUCKET_NAME,
+            file_name,
+            ExtraArgs={
+                "ACL": "public-read",
+                "ContentType": file.content_type
+            }
+        )
+
+        url = f"{S3_LOCATION}{file_name}"
         return user_obj.user_upload_avatar(uid, url)
+
     except Exception as e:
-        return {"error": str(e)}, 500
+        # in case the our s3 upload fails
+        return {"errors": str(e)}, 500
+
+
+    # try:
+    #     # Upload file using Flask-S3
+    #     file.filename = file_name
+    #     s3.upload_fileobj(file, file_name)
+        
+    #     # Generate URL
+    #     url = f"https://{app.config['FLASKS3_BUCKET_NAME']}.s3.amazonaws.com/{file_name}"
+    #     return user_obj.user_upload_avatar(uid, url)
+    # except Exception as e:
+    #     return {"error": str(e)}, 500
 
 
 @app.route("/uploads/<filename>")
