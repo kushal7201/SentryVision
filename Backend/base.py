@@ -28,5 +28,5 @@ def index():
 
 # Add other routes as needed
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
