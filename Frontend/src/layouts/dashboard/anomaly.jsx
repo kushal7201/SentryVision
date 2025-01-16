@@ -228,7 +228,7 @@ export default function Anomaly() {
                             <Table.Cell>{timestamp}</Table.Cell>
                             <Table.Cell>
                                 {/* Assuming the video link is a static URL with the video ID as a parameter */}
-                                <a href={`https://sentryvision.onrender.com/videos/${data.videos[index]}.mp4`}>Link</a>
+                                <a href={`https://sentryvision.s3.amazonaws.com/${data.videos[index]}.mp4`}>Link</a>
                             </Table.Cell>
                             <Table.Cell><button type='button' className='animated-fill-off' onClick={()=>handleDeleteVideo(data.videos[index])}>Delete</button></Table.Cell>
                         </Table.Row>
