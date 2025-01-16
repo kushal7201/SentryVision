@@ -68,18 +68,34 @@ def delete(id):
 def pagination(limit,page):
     return user_obj.user_pagination(int(limit),int(page))
 
-@app.route("/user/<uid>/upload/avatar",methods=["POST"])
-def upload_avatar(uid):    
+from flask_s3 import FlaskS3
+import os
+
+# Add this near the top of your file with other configurations
+s3 = FlaskS3()
+app.config['FLASKS3_BUCKET_NAME'] = 'sentryvision'
+app.config['FLASKS3_BUCKET_NAME'] = 'sentryvision'
+app.config['AWS_ACCESS_KEY_ID'] = os.getenv('AWS_ACCESS_KEY_ID')
+app.config['AWS_SECRET_ACCESS_KEY'] = os.getenv('AWS_SECRET_ACCESS_KEY')
+s3.init_app(app)
+
+@app.route("/user/<uid>/upload/avatar", methods=["POST"])
+def upload_avatar(uid):
     file = request.files['avatar']
-    print(file)
-    # Uniquefile =  str(datetime.now().timestamp()).replace(".","")
-    extension = file.filename.split(".")[-1]  # file extension
+    extension = file.filename.split(".")[-1]
+    file_name = f"avatar_{uid}.{extension}"
+    
+    try:
+        # Upload file using Flask-S3
+        file.filename = file_name
+        s3.upload_fileobj(file, file_name)
+        
+        # Generate URL
+        url = f"https://{app.config['FLASKS3_BUCKET_NAME']}.s3.amazonaws.com/{file_name}"
+        return user_obj.user_upload_avatar(uid, url)
+    except Exception as e:
+        return {"error": str(e)}, 500
 
-    # path = f"uploads/{uid}_{Uniquefile}.{extension}"
-    path = f"uploads/{uid}.{extension}"
-    file.save(path)
-
-    return user_obj.user_upload_avatar(uid,path)
 
 @app.route("/uploads/<filename>")
 def get_avatar(filename):
