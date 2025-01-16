@@ -134,6 +134,7 @@ function SignIn() {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                defaultValue="test@gmail.com"
                 error={emailError !== ""}
                 helperText={emailError}
             />
@@ -146,6 +147,7 @@ function SignIn() {
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="current-password"
+                defaultValue="1234"
                 error={passwordError !== ""}
                 helperText={passwordError}
                 InputProps={{
